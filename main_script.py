@@ -5,11 +5,12 @@ from translate import Translator
 from unicodedata import lookup
 
 URL = "https://api.covid19api.com/summary"
-TOP_NUMBER_OF_COUTNRIES = 50
+TOP_NUMBER_OF_COUNTRIES = 50
 TRANSLATE_TO = "russian"
 OUTPUT_FILE_NAME = "daily_covid_update.txt"
 RECEIVER_NAME = "Инна"
 
+# Get data
 response = requests.request("GET", URL)
 data = json.loads(response.text)
 
@@ -20,7 +21,7 @@ print(
     f' regarding a global summary')
 
 # Sorting TOP countries
-df_countries = df_countries.sort_values("NewDeaths", ascending=False).head(TOP_NUMBER_OF_COUTNRIES)
+df_countries = df_countries.sort_values("NewDeaths", ascending=False).head(TOP_NUMBER_OF_COUNTRIES)
 
 # Translate to Russian
 translator = Translator(from_lang="english", to_lang=TRANSLATE_TO)
@@ -51,3 +52,13 @@ for index, row in filtered_df.iterrows():
 # Writing to file
 with open(OUTPUT_FILE_NAME, "wb") as f:
     f.write(message.encode('utf8'))
+
+# Telegram Bot
+BOT_TOKEN_PATH = "bot_token.txt"
+CHAT_ID_PATH = "group_chat_id.txt"
+
+bot_token = open(BOT_TOKEN_PATH).read()
+chat_id = open(CHAT_ID_PATH).read()
+
+URL_SEND_MSG = f"https://api.telegram.org/bot{bot_token}/sendMessage?chat_id={chat_id}&text={message}"
+requests.post(URL_SEND_MSG)
