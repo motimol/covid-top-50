@@ -37,15 +37,16 @@ df_countries["Flag"] = df_countries["CountryCode"].apply(create_flag)
 
 # Message construction
 #     Global stats:
-total_infections = df_global["Global.TotalConfirmed"][0]
-total_deaths = df_global["Global.TotalDeaths"][0]
+total_infections = format(df_global["Global.TotalConfirmed"][0], ",d")
+total_deaths = format(df_global["Global.TotalDeaths"][0], ",d")
 message = f"Привет {RECEIVER_NAME}. Во всем мире, Есть {total_infections} случаев COVID-19 " \
-          f"и {total_deaths} человек умерли из-за этого\n"
+          f"и {total_deaths} человек умерли из-за этого.\n" \
+          f"Сегодня количество смертей в каждой стране было:\n"
 
 #     Individual countries:
 filtered_df = df_countries[["Flag", "RussianCountry", "NewDeaths"]]
 for index, row in filtered_df.iterrows():
-    message += f'{row["Flag"]} {row["RussianCountry"]}: {row["NewDeaths"]}' + "\n"
+    message += f'{row["Flag"]} {row["RussianCountry"]}: {format(row["NewDeaths"], ",d")}' + "\n"
 
 # Writing to file
 with open(OUTPUT_FILE_NAME, "wb") as f:
